@@ -1,0 +1,37 @@
+---
+- name: packages
+  apt:
+    pkg={{ item }}
+    state=present
+  with_items:
+    - bridge-utils
+    - hostapd
+  tags:
+    - install
+
+- name: hostapd configuration
+  template:
+    src=etc_hostapd_hostapd.conf.j2
+    dest=/etc/hostapd/hostapd.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: restart hostapd
+
+- name: hostapd configuration pointer
+  template:
+    src=etc_default_hostapd.j2
+    dest=/etc/default/hostapd
+    mode=0644
+    owner=root
+    group=root
+  notify: restart hostapd
+
+- name: enable and start services
+  service:
+    name={{ item }}
+    state=started
+    enabled=yes
+  with_items:
+    - hostapd
+

@@ -1,0 +1,8 @@
+---
+
+pimesh:
+  cell_id: '01:23:45:67:89:10'
+  ssid: 'pimesh'
+  gateway:
+    interface: 'eth0'
+    localdomain: 'local'

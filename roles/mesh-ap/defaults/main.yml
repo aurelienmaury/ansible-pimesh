@@ -1,0 +1,8 @@
+---
+
+pimesh:
+  cell_id: '01:23:45:67:89:10'
+  ssid: 'pimesh'
+  ap:
+    ssid: 'pimesh-ap'
+    psk: 'dbcd08c273e30b1f13ce1d20c54b384fa63bab7b4b5cc2502ad66f3738c1e6f9'

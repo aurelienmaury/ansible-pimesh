@@ -1,0 +1,55 @@
+---
+- name: installing some packages
+  apt:
+    pkg={{ item }}
+    state=present
+  with_items:
+    - batctl
+  tags:
+    - install
+
+- name: eth0 and wlan0 at boot
+  template:
+    src=network_interfaces.j2
+    dest=/etc/network/interfaces
+    owner=root
+    group=root
+    mode=0600
+  tags:
+    - conf
+
+- name: load batman-adv mod
+  modprobe:
+    name=batman-adv
+    state=present
+  notify: load batman-adv module at boot
+  tags:
+    - conf
+
+- name: load ipv6 mod
+  modprobe:
+    name=ipv6
+    state=present
+  notify: load ipv6 module at boot
+  tags:
+    - conf
+
+- name: remove wlan0 from ifplugd (init)
+  lineinfile:
+    dest=/etc/default/ifplugd
+    regexp='^INTERFACES=".*"$'
+    line='INTERFACES="eth0"'
+    state=present
+  notify: restart ifplugd
+  tags:
+    - conf
+
+- name: remove wlan0 from ifplugd (udev)
+  lineinfile:
+    dest=/etc/default/ifplugd
+    regexp='^HOTPLUG_INTERFACES=".*"$'
+    line='HOTPLUG_INTERFACES="eth0"'
+    state=present
+  notify: restart ifplugd
+  tags:
+    - conf

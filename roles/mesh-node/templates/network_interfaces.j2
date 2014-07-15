@@ -1,0 +1,56 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+{% if 'mesh-gateway' in group_names %}
+  dns-search {{ pimesh.gateway.localdomain }}
+  {% if 'mesh-ap' not in group_names %}
+  post-up iptables-restore < /etc/iptables.ipv4.nat
+  {% endif %}
+{% endif %}
+allow-hotplug eth0
+
+auto wlan0
+iface wlan0 inet6 auto
+  wireless-channel 1
+  wireless-mode ad-hoc
+  wireless-essid {{ pimesh.ssid }}
+  wireless-ap {{ pimesh.cell_id }}
+  pre-up ifconfig wlan0 mtu 1532
+  post-up batctl if add wlan0
+
+auto bat0
+iface bat0 inet6 auto
+{% if 'mesh-ap' not in group_names and 'mesh-gateway' in group_names %}
+iface bat0 inet static
+  address 192.168.111.1
+  netmask 255.255.255.0
+  post-up batctl gw_mode server
+{% else %}
+iface bat0 inet dhcp
+  post-up batctl gw_mode client
+{% endif %}
+
+{% if 'mesh-ap' in group_names and 'mesh-gateway' in group_names %}
+auto wlan1
+iface wlan1 inet6 auto
+
+auto br0
+iface br0 inet static
+  bridge_ports bat0 wlan1
+  address 192.168.111.1
+  netmask 255.255.255.0
+  post-up iptables-restore < /etc/iptables.ipv4.nat
+{% endif %}
+
+{% if 'mesh-ap' in group_names and 'mesh-gateway' not in group_names %}
+auto wlan1
+iface wlan1 inet6 auto
+
+auto br0
+iface br0 inet dhcp
+  bridge_ports bat0 wlan1
+{% endif %}
+
+iface default inet dhcp

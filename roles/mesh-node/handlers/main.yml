@@ -1,0 +1,23 @@
+---
+
+- name: restart ifplugd
+  service:
+    name=ifplugd
+    state=restarted
+    enabled=yes
+
+- name: load batman-adv module at boot
+  lineinfile:
+    dest=/etc/modules
+    regexp='^batman-adv$'
+    line='batman-adv'
+    state=present
+    insertafter=EOF
+
+- name: load ipv6 module at boot
+  lineinfile:
+    dest=/etc/modules
+    regexp='^ipv6$'
+    line='ipv6'
+    state=present
+    insertafter=EOF
