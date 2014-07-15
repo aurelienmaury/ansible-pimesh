@@ -4,6 +4,7 @@
 
   roles:
     - mesh-gateway
+    - mesh-ap
 
   vars:
     pimesh:
