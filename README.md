@@ -23,4 +23,6 @@ There is 3 roles :
   that can't take part in the ad-hoc network.
 * *mesh-node:* a simple member of the mesh.
 
-A node can be both gateway AND access point.
+A node can be both gateway AND access point. To do that, see example
+in the 'hostlist' file, you need to state the ip of the gateway in 3
+groups: mesh-gateway and mesh-ap, then run the playbook PB01.
